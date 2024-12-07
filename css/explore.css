@@ -1,0 +1,288 @@
+/* Layout */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+
+.main-wrapper {
+    flex: 1;
+    margin-left: 250px;
+}
+
+/* Side Navigation */
+.side-nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 250px;
+    height: 100vh;
+    background: white;
+    padding: 20px 0;
+    border-right: 1px solid #eee;
+}
+
+.side-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.side-nav li a {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.side-nav li a.active {
+    background-color: #e8f5e9;
+    color: #4caf50;
+}
+
+.side-nav li a i {
+    margin-right: 10px;
+}
+
+/* Header */
+.main-header {
+    background: white;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 20px;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+}
+
+.search-bar {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: #f5f5f5;
+    border-radius: 20px;
+    padding: 8px 15px;
+    margin: 0 20px;
+}
+
+.search-bar input {
+    flex: 1;
+    border: none;
+    background: none;
+    outline: none;
+    padding: 5px;
+}
+
+.search-bar i {
+    color: #666;
+}
+
+/* Main Content */
+.main-content {
+    padding: 30px;
+}
+
+.content-header {
+    margin-bottom: 30px;
+}
+
+.content-header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.content-header .subtitle {
+    color: #666;
+    margin: 5px 0 0 0;
+}
+
+.content-layout {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+/* Product Card */
+.product-card {
+    flex: 1;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 0 !important;
+}
+
+.product-card .card-body {
+    padding: 25px;
+}
+
+.product-card img {
+    padding: 20px;
+    object-fit: contain;
+}
+
+.rating {
+    color: #ffc107;
+    margin: 10px 0;
+}
+
+.rating span {
+    color: #666;
+    margin-left: 5px;
+}
+
+.price {
+    color: #4caf50;
+    font-size: 18px;
+    margin: 15px 0;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.quantity {
+    display: flex;
+    align-items: center;
+    background: #f5f5f5;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.quantity input {
+    width: 40px;
+    text-align: center;
+    border: none;
+    background: none;
+    margin: 0 5px;
+}
+
+/* Promo Sidebar */
+.promo-sidebar {
+    width: 300px;
+    background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    text-align: center;
+}
+
+.promo-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.promo-content img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+/* Daily Deals */
+.daily-deals {
+    margin-top: 40px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.view-all {
+    color: #4caf50;
+    text-decoration: none;
+}
+
+.deals-grid {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 10px 0;
+}
+
+.deal-card {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    min-width: 200px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.deal-card img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.deal-card h3 {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+/* Footer */
+.content-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    padding: 20px 0;
+}
+
+.content-footer a {
+    color: #4caf50;
+    text-decoration: none;
+}
+
+.content-footer span {
+    color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-wrapper {
+        margin-left: 0;
+    }
+    
+    .side-nav {
+        transform: translateX(-100%);
+        transition: transform 0.3s;
+    }
+    
+    .side-nav.active {
+        transform: translateX(0);
+    }
+    
+    .content-layout {
+        flex-direction: column;
+    }
+    
+    .promo-sidebar {
+        width: 100%;
+    }
+}
