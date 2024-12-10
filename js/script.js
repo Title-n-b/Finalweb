@@ -83,8 +83,26 @@ function createProductCard(product) {
 }
 document.addEventListener('DOMContentLoaded', function() {
     const sidebarLinks = document.querySelectorAll('.side-nav a');
+    
+    // Function to remove active class from all links
+    function removeActiveClass() {
+        sidebarLinks.forEach(link => {
+            link.classList.remove('active');
+            link.style.backgroundColor = '';
+            link.style.color = '';
+        });
+    }
 
+    // Add click event listeners to all sidebar links
     sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            removeActiveClass();
+            this.classList.add('active');
+            this.style.backgroundColor = '#e8f5e9';
+            this.style.color = '#4caf50';
+        });
+
+        // Hover effects
         link.addEventListener('mouseenter', function() {
             this.style.backgroundColor = '#e8f5e9';
             this.style.color = '#4caf50';
@@ -101,26 +119,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Function to set active link
+    // Set active link based on current URL
     function setActiveLink() {
         const currentPath = window.location.pathname;
         sidebarLinks.forEach(link => {
-            if (link.getAttribute('href') === currentPath) {
+            const href = link.getAttribute('href');
+            if (href === currentPath || 
+                (currentPath === '/' && href === 'index.html') ||
+                (currentPath === '/index.html' && href === '/')) {
                 link.classList.add('active');
                 link.style.backgroundColor = '#e8f5e9';
                 link.style.color = '#4caf50';
-            } else {
-                link.classList.remove('active');
-                link.style.backgroundColor = '';
-                link.style.color = '';
             }
         });
     }
 
     // Set active link on page load
     setActiveLink();
-
-    // Optional: Update active link on navigation if using AJAX
-    // You would need to call setActiveLink() after each navigation event
 });
+
 
