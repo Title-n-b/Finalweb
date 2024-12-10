@@ -223,4 +223,7 @@ body {
 .btn-primary:hover {
     background-color: var(--secondary-color);
 }
-
+.logo { 
+    max-height: 100px; 
+    
+}
