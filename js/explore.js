@@ -39,7 +39,6 @@
 //     }
 // });
 
-
 document.addEventListener("DOMContentLoaded", () => {
     const productGrid = document.getElementById("explore-products");
   
@@ -50,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
           productGrid.innerHTML = data
             .map(
               (product) => `
-            <div class="deal-card">
+            <div class="deal-card" data-id="${product.model}">
                     <img src="${product.image_url || 'default-image.jpg'}" alt="${product.model || 'No model'}">
                     <h3>${product.model || 'Unnamed Product'}</h3>
                     <div class="price">Price $${product.price ? product.price.toFixed(2) : 'N/A'}</div>
@@ -71,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
           productCards.forEach((card) => {
             card.addEventListener("click", () => {
               const model = card.getAttribute("data-id");
-              window.location.href = `product.html?model=${model}`;
+              window.location.href = `product.html?model=${encodeURIComponent(model)}`;
             });
           });
         } else {
@@ -82,9 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Error fetching products:", error);
         productGrid.innerHTML = `<p>Failed to load products. Error: ${error.message}</p>`;
       });
-  });
-
-
+});
 
 const dropdowns = document.querySelectorAll('.dropdown');
 dropdowns.forEach(dropdown => {

@@ -98,6 +98,30 @@ app.get('/api/products', (req, res) => {
     });
 });
 
+app.get('/api/products/:model', (req, res) => {
+    const { model } = req.params;
+    const sql = `
+        SELECT products.model, products.price, products.image_url, 
+               brands.name AS brand_name, categories.name AS category_name 
+        FROM products
+        JOIN brands ON products.brand_id = brands.id
+        JOIN categories ON products.category_id = categories.id
+        WHERE products.model = ?
+    `;
+    connection.query(sql, [model], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err.message);
+            return res.status(500).json({ error: 'Failed to fetch product details' });
+        }
+    
+        if (!results || results.length === 0) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+    
+        res.status(200).json(results[0]);
+    });
+});
+
 // Page routes
 app.get('/login', (req, res) => {
     if (req.session.userId) {
@@ -176,3 +200,4 @@ server.listen(port, () => {
 });
 
 export default app;
+
