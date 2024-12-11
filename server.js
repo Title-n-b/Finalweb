@@ -75,6 +75,68 @@ const requireLogin = (req, res, next) => {
     }
 };
 
+//
+// API Register
+app.post('/api/register', async (req, res) => {
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+        return res.status(400).send({ message: 'All fields are required' });
+    }
+
+    try {
+        // เข้ารหัสรหัสผ่านก่อนบันทึก
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // SQL Query
+        const query = 'INSERT INTO accounts (username, email, password) VALUES (?, ?, ?)';
+        connection.query(query, [username, email, hashedPassword], (err, results) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send({ message: 'Database error' });
+            }
+            res.status(201).send({ message: 'User registered successfully' });
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'An error occurred' });
+    }
+});
+
+
+// API Login
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).send({ message: 'Both username and password are required' });
+    }
+
+    // SQL Query เพื่อตรวจสอบผู้ใช้
+    const query = 'SELECT * FROM accounts WHERE username = ?';
+    connection.query(query, [username], async (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send({ message: 'Database error' });
+        }
+
+        if (results.length === 0) {
+            return res.status(401).send({ message: 'Invalid username or password' });
+        }
+
+        const user = results[0];
+
+        // ตรวจสอบรหัสผ่าน
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).send({ message: 'Invalid username or password' });
+        }
+
+        res.status(200).send({ message: 'Login successful', username: user.username });
+    });
+});
+
+//
 // API routes
 app.get('/api/products', (req, res) => {
     const sql = `

@@ -180,6 +180,69 @@
     height: 50px;
     margin: 0 40px;
   }
+
+ /* Section หลัก */
+.chanal-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh; /* ให้ครอบความสูงของหน้าจอ */
+    background-color: #000; /* พื้นหลังสีดำ */
+    padding: 0 5%; /* เพิ่มระยะห่างด้านข้าง */
+}
+
+/* การจัดวางเนื้อหา */
+.chanal-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px; /* ระยะห่างระหว่างรูปและข้อความ */
+    max-width: 1200px; /* จำกัดความกว้างรวม */
+    width: 100%;
+}
+
+/* สไตล์รูปภาพ */
+.chanal-image img {
+    width: 50%; /* กำหนดรูปภาพให้กินครึ่งหนึ่งของหน้าจอ */
+    height: auto;
+    object-fit: cover; /* ตัดส่วนที่เกิน */
+    border-radius: 5px; /* เพิ่มมุมโค้งเล็กน้อย */
+}
+
+/* สไตล์ข้อความ */
+.chanal-text {
+    flex: 1;
+    color: #fff; /* ข้อความสีขาว */
+    text-align: left;
+}
+
+.chanal-text h1 {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.chanal-text p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.chanal-text a {
+    display: inline-block;
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 1px solid #fff;
+    padding-bottom: 3px;
+    font-weight: 400;
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.chanal-text a:hover {
+    color: #ccc;
+    border-color: #ccc;
+}
+
 /* .carousel-item img {
     transition: filter 0.5s ease; 
     filter: brightness(50%); 

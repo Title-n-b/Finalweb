@@ -23,6 +23,63 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeCart();
 });
 
+//
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("search-input");
+    const productGrid = document.getElementById("explore-products");
+
+    let products = []; // เก็บข้อมูลสินค้า
+
+    // ดึงข้อมูลสินค้าเมื่อหน้าโหลด
+    fetch("/api/products")
+        .then((response) => response.json())
+        .then((data) => {
+            products = data; // เก็บสินค้าในตัวแปร
+            displayProducts(products); // แสดงสินค้าทั้งหมด
+        })
+        .catch((error) => {
+            console.error("Error fetching products:", error);
+        });
+
+    // ฟังก์ชันสำหรับแสดงสินค้า
+    function displayProducts(productsToDisplay) {
+        productGrid.innerHTML = productsToDisplay
+            .map(
+                (product) => `
+            <div class="deal-card">
+                <img src="${product.image_url || 'default-image.jpg'}" alt="${product.model || 'No model'}">
+                <h3>${product.model || 'Unnamed Product'}</h3>
+                <div class="price">Price $${product.price ? product.price.toFixed(2) : 'N/A'}</div>
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <span>4.9</span>
+                </div>
+                <button class="btn btn-success add-to-cart">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+          `
+            )
+            .join("");
+    }
+
+    // ฟังก์ชันค้นหาสินค้า
+    searchInput.addEventListener("input", (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+
+        // กรองสินค้าที่ตรงกับคำค้นหา
+        const filteredProducts = products.filter((product) =>
+            product.model.toLowerCase().includes(searchTerm)
+        );
+
+        // แสดงสินค้าที่กรองแล้ว
+        displayProducts(filteredProducts);
+    });
+});
+
+
+//
+
 // Cart functionality
 function initializeCart() {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
