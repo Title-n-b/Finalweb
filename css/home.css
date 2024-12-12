@@ -365,3 +365,78 @@
     object-fit: cover;
 }
 
+/* dior-container */
+.dior-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    flex-wrap: wrap;
+    background: #ffffff; 
+}
+
+.dior-card {
+    background-color: white;
+    border: none; /* ลบเส้นขอบ */
+    border-radius: 12px; /* ปรับให้มุมโค้งมากขึ้น */
+    max-width: 280px; /* ลดขนาดการ์ดเล็กน้อย */
+    overflow: hidden; /* ป้องกันเนื้อหาเกินขอบ */
+    transition: transform 0.3s, box-shadow 0.3s; /* เพิ่มเอฟเฟกต์เมื่อ hover */
+    margin: 20px;
+    margin-top: 30px;
+}
+
+.dior-card:hover {
+    transform: translateY(-10px); /* ยกการ์ดขึ้นเมื่อ hover */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* เปลี่ยนเงาเมื่อ hover */
+}
+
+.dior-card img {
+    width: 100%;
+    border-radius: 0; 
+}
+
+.dior-card h2 {
+    font-size: 1.1em; /* ลดขนาดฟอนต์เล็กน้อย */
+    margin: 12px 16px; /* ลดระยะห่าง */
+    color: #222; /* ปรับสีให้เข้มขึ้น */
+}
+
+.dior-card p {
+    font-size: 0.85em; /* ลดขนาดฟอนต์เล็กน้อย */
+    margin: 12px 16px; /* ลดระยะห่าง */
+    color: #666; /* ปรับสีข้อความให้ซอฟต์ลง */
+}
+
+.dior-card a {
+    display: block; /* เปลี่ยนปุ่มให้กว้างเท่ากับการ์ด */
+    text-align: center; /* จัดข้อความให้อยู่ตรงกลาง */
+    margin: 0 16px 16px; /* ปรับระยะห่าง */
+    padding: 10px 0; /* เพิ่ม padding ด้านบนและล่าง */
+    color: black;
+    text-decoration: none;
+    font-size: 0.9em; /* ลดขนาดฟอนต์เล็กน้อย */
+    position: relative; /* ใช้สำหรับจัดการเส้น */
+    overflow: hidden; /* ป้องกันเส้นเกินขอบ */
+    transition: color 0.3s; /* เพิ่ม transition สำหรับสีข้อความ */
+}
+
+.dior-card a::before {
+    content: ""; /* สร้างเส้น */
+    position: absolute;
+    bottom: 0; /* วางเส้นไว้ด้านล่าง */
+    left: 0;
+    width: 100%;
+    height: 2px; /* ความหนาของเส้น */
+    background: #000; /* สีของเส้น */
+    transform: translateX(-100%); /* เริ่มต้นให้เส้นอยู่ด้านซ้ายสุด */
+    transition: transform 0.3s ease; /* เพิ่ม transition สำหรับการเลื่อน */
+}
+
+.dior-card a:hover {
+    color: #444; /* เปลี่ยนสีข้อความเมื่อ hover */
+}
+
+.dior-card a:hover::before {
+    transform: translateX(0); /* ให้เส้นวิ่งผ่านเมื่อ hover */
+}

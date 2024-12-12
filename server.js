@@ -121,6 +121,9 @@ app.get('/cart', requireLogin, (req, res) => {
 app.get('/purchase', requireLogin, (req, res) => {
     res.sendFile(path.join(__dirname, 'purchase.html'));
 });
+app.get('/map', requireLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'map.html'));
+});
 
 //
 // API Register
