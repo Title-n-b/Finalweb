@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <i class="fas fa-star"></i>
                         <span>4.9</span>
                     </div>
-                    <button class="btn btn-success add-to-cart">
+                    <button class="btn btn-success" >
                         <i class="fas fa-plus"></i>
                     </button>
                 </div>
