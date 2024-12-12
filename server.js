@@ -77,6 +77,50 @@ const requireLogin = (req, res, next) => {
         }
     }
 };
+// Middleware to restrict access for users who are not logged in
+const restrictAccess = (req, res, next) => {
+    const allowedPaths = ["/", "/login", "/registration", "/api/login", "/api/register", "/forgot-password"];
+    const requestedPath = req.path.toLowerCase();
+
+    // Allow access only if logged in or path is explicitly allowed
+    if (req.session.userId || allowedPaths.includes(requestedPath)) {
+        next(); 
+    } else if (requestedPath.endsWith('.html')) {
+        // Redirect to login if trying to access HTML files without login
+        res.redirect('/login'); 
+    } else {
+        // Redirect to login for other unauthorized access attempts
+        res.redirect('/login');
+    }
+};
+
+
+
+// Apply the middleware globally to all routes
+app.use(restrictAccess);
+
+// Example home route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+app.get('/explore', requireLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'explore.html'));
+});
+
+app.get('/saved', requireLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'saved.html'));
+});
+
+app.get('/cart', requireLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'cart.html'));
+});
+
+app.get('/purchase', requireLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'purchase.html'));
+});
 
 //
 // API Register
@@ -232,7 +276,7 @@ app.get('/login', (req, res) => {
         res.redirect('/');
         return;
     }
-    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+    res.sendFile(path.join(__dirname, 'login.html'));
 });
 
 app.get('/registration', (req, res) => {
@@ -240,15 +284,15 @@ app.get('/registration', (req, res) => {
         res.redirect('/');
         return;
     }
-    res.sendFile(path.join(__dirname, 'public', 'registration.html'));
+    res.sendFile(path.join(__dirname, 'registration.html'));
 });
 
 app.get('/forgot-password', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'forgot-password.html'));
+    res.sendFile(path.join(__dirname, 'forgot-password.html'));
 });
 
 app.get('/change-password', requireLogin, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'change-password.html'));
+    res.sendFile(path.join(__dirname, 'change-password.html'));
 });
 
 // Authentication routes
