@@ -45,6 +45,9 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// ตั้งค่าโฟลเดอร์ views และ EJS
+app.set('views', path.join(__dirname, 'views')); // กำหนดโฟลเดอร์สำหรับไฟล์ EJS
+app.set('view engine', 'ejs'); // ตั้งค่า EJS เป็น template engine
 // Serve static files
 app.use('/js', express.static(path.join(__dirname, '/js')));
 app.use(express.static(__dirname));
@@ -109,6 +112,7 @@ app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
+        console.log('Login failed: Missing username or password');
         return res.status(400).send({ message: 'Both username and password are required' });
     }
 
@@ -121,6 +125,7 @@ app.post('/api/login', (req, res) => {
         }
 
         if (results.length === 0) {
+            console.log('Login failed: Invalid username');
             return res.status(401).send({ message: 'Invalid username or password' });
         }
 
@@ -131,6 +136,10 @@ app.post('/api/login', (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).send({ message: 'Invalid username or password' });
         }
+
+        // ตั้งค่าเซสชันเมื่อผู้ใช้ล็อกอินสำเร็จ
+        req.session.userId = user.id;
+        req.session.username = user.username;
 
         res.status(200).send({ message: 'Login successful', username: user.username });
     });
@@ -183,6 +192,22 @@ app.get('/api/products/:model', (req, res) => {
         res.status(200).json(results[0]);
     });
 });
+//
+app.get('/api/product/2', (req, res) => {
+    const sql = `SELECT * FROM products ORDER BY id LIMIT 1 OFFSET 1;`; // ดึงสินค้าตำแหน่งที่ 2
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.error("Database query error:", err);
+            res.status(500).json({ message: "Error fetching product" });
+        } else if (result.length > 0) {
+            res.json(result[0]); // ส่งข้อมูลสินค้าตำแหน่งที่ 2
+        } else {
+            res.status(404).json({ message: "Product not found" });
+        }
+    });
+});
+//
+
 
 // Page routes
 app.get('/login', (req, res) => {
