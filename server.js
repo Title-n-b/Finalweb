@@ -107,45 +107,62 @@ app.post('/api/register', async (req, res) => {
 });
 
 
-// API Login
-app.post('/api/login', (req, res) => {
-    const { username, password } = req.body;
 
-    if (!username || !password) {
-        console.log('Login failed: Missing username or password');
-        return res.status(400).send({ message: 'Both username and password are required' });
+// Get user info
+app.get('/api/user', (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({ message: 'Not logged in' });
     }
-
-    // SQL Query เพื่อตรวจสอบผู้ใช้
-    const query = 'SELECT * FROM accounts WHERE username = ?';
-    connection.query(query, [username], async (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send({ message: 'Database error' });
-        }
-
-        if (results.length === 0) {
-            console.log('Login failed: Invalid username');
-            return res.status(401).send({ message: 'Invalid username or password' });
-        }
-
-        const user = results[0];
-
-        // ตรวจสอบรหัสผ่าน
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(401).send({ message: 'Invalid username or password' });
-        }
-
-        // ตั้งค่าเซสชันเมื่อผู้ใช้ล็อกอินสำเร็จ
-        req.session.userId = user.id;
-        req.session.username = user.username;
-
-        res.status(200).send({ message: 'Login successful', username: user.username });
+    res.json({ 
+        username: req.session.username,
+        isLoggedIn: true 
     });
 });
 
-//
+
+
+// Login route
+app.post('/api/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ message: 'Username and password required' });
+    }
+
+    const query = 'SELECT * FROM accounts WHERE username = ?';
+    connection.query(query, [username], async (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Database error' });
+        }
+
+        if (results.length === 0) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        const user = results[0];
+        const validPassword = await bcrypt.compare(password, user.password);
+
+        if (!validPassword) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        req.session.userId = user.id;
+        req.session.username = user.username;
+        
+        res.json({ 
+            message: 'Login successful',
+            username: user.username
+        });
+    });
+});
+
+// Logout route
+app.post('/api/logout', (req, res) => {
+    req.session.destroy();
+    res.json({ message: 'Logged out successfully' });
+});
+
+
 // API routes
 app.get('/api/products', (req, res) => {
     const sql = `

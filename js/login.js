@@ -76,12 +76,7 @@ document.getElementById('login-form').addEventListener('submit', async function 
         const result = await response.json();
 
         if (response.ok) {
-            alert(result.message);
-            // เคลียร์ค่าในช่อง input
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            window.location.href = '/index.html'; // เปลี่ยนเส้นทางไปหน้าหลังล็อกอินสำเร็จ
-
+            window.location.href = '/'; 
         } else {
             alert('Login failed: ' + result.message);
         }
@@ -90,6 +85,8 @@ document.getElementById('login-form').addEventListener('submit', async function 
         alert('An error occurred during login');
     }
 });
+
+
 
 //
 

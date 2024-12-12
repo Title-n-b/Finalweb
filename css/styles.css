@@ -227,3 +227,27 @@ body {
     max-height: 100px; 
     
 }
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.username {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-primary);
+    padding: 0.5rem;
+    transition: color 0.2s;
+}
+
+.logout-btn:hover {
+    color: var(--text-secondary);
+}
+
