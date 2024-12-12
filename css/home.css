@@ -181,66 +181,66 @@
     margin: 0 40px;
   }
 
- /* Section หลัก */
+ /* รูปแบบพื้นฐาน */
 .chanal-section {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh; /* ให้ครอบความสูงของหน้าจอ */
-    background-color: #000; /* พื้นหลังสีดำ */
-    padding: 0 5%; /* เพิ่มระยะห่างด้านข้าง */
+    width: 100%;
+    padding: 20px;
+    background-color: #f9f9f9; /* เพิ่มสีพื้นหลังให้ดูสะอาด */
 }
 
-/* การจัดวางเนื้อหา */
 .chanal-content {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 20px; /* ระยะห่างระหว่างรูปและข้อความ */
-    max-width: 1200px; /* จำกัดความกว้างรวม */
-    width: 100%;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 20px;
+    flex-wrap: wrap; /* ทำให้เลย์เอาต์เรียงลงเมื่อหน้าจอเล็ก */
 }
 
-/* สไตล์รูปภาพ */
+.chanal-image {
+    flex: 1; /* ขนาด 50% */
+    text-align: center;
+}
+
 .chanal-image img {
-    width: 50%; /* กำหนดรูปภาพให้กินครึ่งหนึ่งของหน้าจอ */
-    height: auto;
-    object-fit: cover; /* ตัดส่วนที่เกิน */
-    border-radius: 5px; /* เพิ่มมุมโค้งเล็กน้อย */
+    width: 100%; /* ให้รูปภาพขยายเต็มพื้นที่ */
+    max-width: 500px; /* กำหนดขนาดสูงสุดของรูป */
+    height: auto; /* คงอัตราส่วนของรูป */
+    border-radius: 10px; /* มุมมน */
 }
 
-/* สไตล์ข้อความ */
 .chanal-text {
-    flex: 1;
-    color: #fff; /* ข้อความสีขาว */
+    flex: 1; /* ขนาด 50% */
     text-align: left;
+    font-size: 16px;
 }
 
 .chanal-text h1 {
-    font-size: 3.5rem;
-    font-weight: bold;
-    margin-bottom: 20px;
+    font-size: 2rem;
+    margin-bottom: 15px;
+    color: #222;
 }
 
 .chanal-text p {
-    font-size: 1.2rem;
-    line-height: 1.8;
+    font-size: 1rem;
+    line-height: 1.6;
     margin-bottom: 20px;
+    color: #555;
 }
 
 .chanal-text a {
     display: inline-block;
-    color: #fff;
+    padding: 10px 20px;
+    background-color: black;
+    color: white;
     text-decoration: none;
-    border-bottom: 1px solid #fff;
-    padding-bottom: 3px;
-    font-weight: 400;
-    transition: color 0.3s ease, border-color 0.3s ease;
+    border-radius: 5px;
+    transition: background-color 0.3s;
 }
 
 .chanal-text a:hover {
-    color: #ccc;
-    border-color: #ccc;
+    background-color: #555;
 }
 
 /* .carousel-item img {
