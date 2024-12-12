@@ -1,68 +1,98 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const savedProductsContainer = document.getElementById('saved-products');
+    const savedItemsContainer = document.getElementById('saved-items');
 
-    // Load favorites from local storage
-    function loadFavorites() {
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        if (favorites.length > 0) {
-            savedProductsContainer.innerHTML = favorites.map(product => `
-                <div class="card product-card mb-4" data-id="${product.id}">
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            <img src="${product.image}" 
-                                 class="img-fluid rounded-start" 
-                                 alt="${product.name}">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h5 class="card-title">${product.name}</h5>
-                                <div class="rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <span>(200+ Reviews)</span>
-                                </div>
-                                <p class="card-text">${product.description || 'No description available.'}</p>
-                                <div class="price">${product.price}</div>
-                                <div class="actions">
-                                    <button class="btn btn-success">Add to card</button>
-                                    <button class="btn btn-outline-success heart-btn">
-                                        <i class="fas fa-heart"></i>
-                                    </button>
-                                    <div class="quantity">
-                                        <button class="btn btn-outline-success">-</button>
-                                        <input type="text" value="1"/>
-                                        <button class="btn btn-outline-success">+</button>
-                                    </div>
-                                    <button class="btn btn-success">Buy Now</button>
-                                </div>
+    function fetchSavedItems() {
+        fetch('/api/saved')
+            .then(response => response.json())
+            .then(items => {
+                if (items.length === 0) {
+                    savedItemsContainer.innerHTML = '<p>You have no saved items.</p>';
+                } else {
+                    const itemsHTML = items.map(item => `
+                        <div class="saved-item" data-id="${item.id}">
+                            <img src="${item.image_url}" alt="${item.model}" class="saved-item-image">
+                            <div class="saved-item-details">
+                                <h3>${item.model}</h3>
+                                <p>Price: $${item.price.toFixed(2)}</p>
+                                <button class="add-to-cart-btn" data-product-id="${item.products_id}">Add to Cart</button>
+                                <button class="remove-saved-btn">Remove</button>
                             </div>
                         </div>
-                    </div>
-                </div>
-            `).join('');
-        } else {
-            savedProductsContainer.innerHTML = `<p>No saved products yet.</p>`;
-        }
+                    `).join('');
+                    
+                    savedItemsContainer.innerHTML = itemsHTML;
+
+                    // Add event listeners for add to cart and remove buttons
+                    addSavedItemListeners();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                savedItemsContainer.innerHTML = '<p>Failed to load saved items.</p>';
+            });
     }
 
-    // Remove product from favorites
-    savedProductsContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('remove-favorite')) {
-            const productCard = e.target.closest('.product-card');
-            const productId = productCard.getAttribute('data-id');
+    function addSavedItemListeners() {
+        const addToCartBtns = document.querySelectorAll('.add-to-cart-btn');
+        const removeSavedBtns = document.querySelectorAll('.remove-saved-btn');
 
-            let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-            favorites = favorites.filter(item => item.id !== productId);
-            localStorage.setItem('favorites', JSON.stringify(favorites));
+        addToCartBtns.forEach(btn => {
+            btn.addEventListener('click', addToCart);
+        });
 
-            // Reload favorites
-            loadFavorites();
-        }
-    });
+        removeSavedBtns.forEach(btn => {
+            btn.addEventListener('click', removeSavedItem);
+        });
+    }
 
-    // Load favorites on page load
-    loadFavorites();
+    function addToCart(event) {
+        const btn = event.target;
+        const productId = btn.dataset.productId;
+
+        fetch('/api/cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ product_id: productId, quantity: 1 }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Item added to cart successfully!');
+            } else {
+                alert('Failed to add item to cart. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    }
+
+    function removeSavedItem(event) {
+        const btn = event.target;
+        const savedItem = btn.closest('.saved-item');
+        const itemId = savedItem.dataset.id;
+
+        fetch(`/api/saved/${itemId}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                fetchSavedItems(); // Refresh the saved items list
+            } else {
+                alert('Failed to remove saved item. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    }
+
+    // Initial fetch of saved items
+    fetchSavedItems();
 });
+

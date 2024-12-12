@@ -339,6 +339,246 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
+// Add to cart
+app.post('/api/cart', requireLogin, (req, res) => {
+    const { product_id, quantity } = req.body;
+    const account_id = req.session.userId;
+
+    // First, get the product details
+    const productQuery = 'SELECT * FROM products WHERE id = ?';
+    connection.query(productQuery, [product_id], (err, productResults) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
+        if (productResults.length === 0) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        const product = productResults[0];
+        const total = product.price * quantity;
+
+        // Now insert into the cart table
+        const insertQuery = `
+            INSERT INTO cart (account_id, username, brand_id, products_id, model, price, image_url, quantity, total)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        connection.query(insertQuery, [
+            account_id,
+            req.session.username,
+            product.brand_id,
+            product.id,
+            product.model,
+            product.price,
+            product.image_url,
+            quantity,
+            total
+        ], (insertErr) => {
+            if (insertErr) {
+                console.error('Insert error:', insertErr);
+                return res.status(500).json({ success: false, message: 'Failed to add to cart' });
+            }
+            res.json({ success: true, message: 'Added to cart successfully' });
+        });
+    });
+});
+
+// Save item
+app.post('/api/saved', requireLogin, (req, res) => {
+    const { product_id } = req.body;
+    const account_id = req.session.userId;
+
+    // First, get the product details
+    const productQuery = 'SELECT * FROM products WHERE id = ?';
+    connection.query(productQuery, [product_id], (err, productResults) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
+        if (productResults.length === 0) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        const product = productResults[0];
+
+        // Now insert into the saved table
+        const insertQuery = `
+            INSERT INTO saved (account_id, username, brand_id, products_id, model, price, image_url)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `;
+        connection.query(insertQuery, [
+            account_id,
+            req.session.username,
+            product.brand_id,
+            product.id,
+            product.model,
+            product.price,
+            product.image_url
+        ], (insertErr) => {
+            if (insertErr) {
+                return res.status(500).json({ success: false, message: 'Failed to save item' });
+            }
+            res.json({ success: true, message: 'Item saved successfully' });
+        });
+    });
+});
+
+// Get cart items
+app.get('/api/cart', requireLogin, (req, res) => {
+    const account_id = req.session.userId;
+    const query = 'SELECT * FROM cart WHERE account_id = ?';
+    connection.query(query, [account_id], (err, results) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
+        res.json(results);
+    });
+});
+
+// Update cart item quantity
+app.put('/api/cart/:id', requireLogin, (req, res) => {
+    const { id } = req.params;
+    const { quantity } = req.body;
+    const account_id = req.session.userId;
+
+    const query = 'UPDATE cart SET quantity = ?, total = price * ? WHERE id = ? AND account_id = ?';
+    connection.query(query, [quantity, quantity, id, account_id], (err, result) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ success: false, message: 'Item not found in cart' });
+        }
+        res.json({ success: true, message: 'Cart updated successfully' });
+    });
+});
+
+// Remove item from cart
+app.delete('/api/cart/:id', requireLogin, (req, res) => {
+    const { id } = req.params;
+    const account_id = req.session.userId;
+
+    const query = 'DELETE FROM cart WHERE id = ? AND account_id = ?';
+    connection.query(query, [id, account_id], (err, result) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ success: false, message: 'Item not found in cart' });
+        }
+        res.json({ success: true, message: 'Item removed from cart successfully' });
+    });
+});
+
+// Get saved items
+app.get('/api/saved', requireLogin, (req, res) => {
+    const account_id = req.session.userId;
+    const query = 'SELECT * FROM saved WHERE account_id = ?';
+    connection.query(query, [account_id], (err, results) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
+        res.json(results);
+    });
+});
+
+// Remove saved item
+app.delete('/api/saved/:id', requireLogin, (req, res) => {
+    const { id } = req.params;
+    const account_id = req.session.userId;
+
+    const query = 'DELETE FROM saved WHERE id = ? AND account_id = ?';
+    connection.query(query, [id, account_id], (err, result) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ success: false, message: 'Saved item not found' });
+        }
+        res.json({ success: true, message: 'Item removed from saved list successfully' });
+    });
+});
+
+// Get purchase history
+app.get('/api/purchase-history', requireLogin, (req, res) => {
+    const account_id = req.session.userId;
+    const query = 'SELECT * FROM purchase WHERE account_id = ? ORDER BY purchase_date DESC';
+    connection.query(query, [account_id], (err, results) => {
+        if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
+        res.json({ success: true, purchases: results });
+    });
+});
+// Handle purchase
+app.post('/api/purchase', requireLogin, (req, res) => {
+    const { product_id, quantity, name, email, address, card } = req.body;
+    const account_id = req.session.userId;
+
+    console.log('Purchase attempt:', { product_id, quantity, name, email, address: address.substring(0, 10) + '...', card: '****' + card.slice(-4) });
+
+    if (!product_id) {
+        console.error('Product ID is missing');
+        return res.status(400).json({ success: false, message: 'Product ID is required' });
+    }
+
+    // First, get the product details
+    const productQuery = 'SELECT * FROM products WHERE id = ?';
+    connection.query(productQuery, [product_id], (err, productResults) => {
+        if (err) {
+            console.error('Database error when fetching product:', err);
+            return res.status(500).json({ success: false, message: 'Database error' });
+        }
+        if (productResults.length === 0) {
+            console.error('Product not found:', product_id);
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        const product = productResults[0];
+        const total = product.price * quantity;
+
+        console.log('Product found:', { id: product.id, model: product.model, price: product.price, total });
+
+        // Now insert into the purchase table
+        const insertQuery = `
+            INSERT INTO purchase (account_id, username, name, email, address, card_number, brand_id, products_id, model, price, image_url, quantity, total)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        connection.query(insertQuery, [
+            account_id,
+            req.session.username,
+            name,
+            email,
+            address,
+            card, // In a real application, you should encrypt this before storing
+            product.brand_id,
+            product.id,
+            product.model,
+            product.price,
+            product.image_url,
+            quantity,
+            total
+        ], (insertErr, result) => {
+            if (insertErr) {
+                console.error('Insert error:', insertErr);
+                return res.status(500).json({ success: false, message: 'Failed to process purchase' });
+            }
+            console.log('Purchase successful:', { account_id, username: req.session.username, product_id, quantity, total });
+            
+            // Fetch the newly inserted purchase
+            const purchaseQuery = `SELECT * FROM purchase WHERE id = ?`;
+            connection.query(purchaseQuery, [result.insertId], (purchaseErr, purchaseResults) => {
+                if (purchaseErr) {
+                    console.error('Error fetching purchase:', purchaseErr);
+                    return res.status(500).json({ success: true, message: 'Purchase successful, but failed to fetch details' });
+                }
+                res.json({ success: true, message: 'Purchase successful', purchase: purchaseResults[0] });
+            });
+        });
+    });
+});
+
+
+
 // Create HTTP server
 const server = http.createServer(app);
 
