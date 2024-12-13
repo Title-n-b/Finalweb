@@ -152,6 +152,73 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 });
 
+//ค้นหาสินค้า 
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("search-input");
+    const productGrid = document.getElementById("explore-products");
+
+    let products = []; // เก็บข้อมูลสินค้า
+
+    // ดึงข้อมูลสินค้าเมื่อหน้าโหลด
+    fetch("/api/products")
+        .then((response) => response.json())
+        .then((data) => {
+            products = data; // เก็บสินค้าในตัวแปร
+            displayProducts(products); // แสดงสินค้าทั้งหมด
+        })
+        .catch((error) => {
+            console.error("Error fetching products:", error);
+        });
+
+    // ฟังก์ชันสำหรับแสดงสินค้า
+    function displayProducts(productsToDisplay) {
+        productGrid.innerHTML = productsToDisplay
+            .map(
+                (product) => `
+            <div class="deal-card">
+                <img src="${product.image_url || 'default-image.jpg'}" alt="${product.model || 'No model'}">
+                <h3>${product.model || 'Unnamed Product'}</h3>
+                <div class="price">Price $${product.price ? product.price.toFixed(2) : 'N/A'}</div>
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <span>4.9</span>
+                </div>
+                <button type="button" class="btn btn-success add-to-cart-btn" data-product-id="${product.id}">
+                                <i class="fas fa-plus"></i> เพิ่มลงตะกร้า
+                            </button>
+            </div>
+          `
+            )
+            .join("");
+           // เพิ่ม Event Listener ให้ปุ่ม "Add to Cart" หลังจากอัปเดต DOM
+    const addToCartButtons = document.querySelectorAll(".add-to-cart-btn");
+    addToCartButtons.forEach((button) => {
+        button.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const productId = button.getAttribute("data-product-id");
+            if (productId) {
+                addToCart(productId, 1); // เพิ่มสินค้าไปยังตะกร้า
+            } else {
+                console.error("Product ID not found in button");
+                alert("เกิดข้อผิดพลาด: ไม่พบรหัสสินค้า");
+            }
+        });
+    });
+    }
+
+    // ฟังก์ชันค้นหาสินค้า
+    searchInput.addEventListener("input", (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        // กรองสินค้าที่ตรงกับคำค้นหา
+        const filteredProducts = products.filter((product) =>
+            product.model.toLowerCase().includes(searchTerm)
+        );
+
+        // แสดงสินค้าที่กรองแล้ว
+        displayProducts(filteredProducts);
+    });
+});
+
 // Function to add product to cart
 function addToCart(productId, quantity) {
     // ตรวจสอบความถูกต้องของ input

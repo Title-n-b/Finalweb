@@ -198,15 +198,6 @@ body {
     align-items: center;
     flex-wrap: wrap;
 }
-.dropdown {
-    min-width: 5em;
-    max-width: 10em;
-    position: relative;
-    margin: 2em;
-}
-.dropdwon * {
-    box-sizing: border-box;
-}
 .select {
     background: #2a2f3b;
     color: #fff;
