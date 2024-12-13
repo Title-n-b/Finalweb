@@ -1,10 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOMContentLoaded event fired.");
     const specificProductContainer = document.getElementById("specific-product");
     let quantity = 1;
 
+    // Fetch and display a specific product
     fetch("/api/product/2")
         .then((response) => response.json())
         .then((product) => {
+            console.log("Product fetched:", product);
             if (product) {
                 specificProductContainer.innerHTML = `
                     <div class="card product-card mb-4">
@@ -41,13 +44,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 `;
 
-                // Add event listeners
+                console.log("Product HTML generated.");
+
+                // Add event listeners after the HTML is generated
                 document.getElementById("increase-quantity").addEventListener("click", () => {
+                    console.log("Increase quantity button clicked.");
                     quantity++;
                     document.getElementById("quantity-input").value = quantity;
                 });
 
                 document.getElementById("decrease-quantity").addEventListener("click", () => {
+                    console.log("Decrease quantity button clicked.");
                     if (quantity > 1) {
                         quantity--;
                         document.getElementById("quantity-input").value = quantity;
@@ -55,17 +62,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 document.getElementById("add-to-cart").addEventListener("click", () => {
+                    console.log("Add to Cart button clicked.");
                     addToCart(product.id, quantity);
                 });
 
                 document.getElementById("save-item").addEventListener("click", () => {
+                    console.log("Save Item button clicked.");
                     saveItem(product.id);
                 });
 
                 document.getElementById("buy-now").addEventListener("click", () => {
+                    console.log("Buy Now button clicked.");
                     showBuyNowPopup(product, quantity);
                 });
             } else {
+                console.warn("No product found.");
                 specificProductContainer.innerHTML = `<p>No product found.</p>`;
             }
         })
@@ -73,64 +84,158 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error fetching product:", error);
             specificProductContainer.innerHTML = `<p>Failed to load product. Error: ${error.message}</p>`;
         });
+
+    
+});
+document.addEventListener("DOMContentLoaded", () => {
+    const productGrid = document.getElementById("explore-products");
+
+    // ดึงข้อมูลสินค้าและแสดงผล
+    fetch("/api/products")
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("ข้อมูลสินค้าที่ได้รับ:", data);
+            if (Array.isArray(data) && data.length > 0) {
+                // สร้าง HTML สำหรับแต่ละสินค้า
+                const productsHTML = data.map(product => {
+                    // ตรวจสอบว่ามี id จริงๆ
+                    if (!product.id) {
+                        console.warn("พบสินค้าที่ไม่มี ID:", product);
+                        return ''; // ข้ามสินค้าที่ไม่มี ID
+                    }
+
+                    return `
+                        <div class="deal-card">
+                            <img src="${product.image_url || 'default-image.jpg'}" alt="${product.model || 'ไม่มีชื่อรุ่น'}">
+                            <h3>${product.model || 'สินค้าไม่มีชื่อ'}</h3>
+                            <div class="price">ราคา $${product.price ? product.price.toFixed(2) : 'ไม่ระบุ'}</div>
+                            <div class="rating">
+                                <i class="fas fa-star"></i>
+                                <span>4.9</span>
+                            </div>
+                            <button type="button" class="btn btn-success add-to-cart-btn" data-product-id="${product.id}">
+                                <i class="fas fa-plus"></i> เพิ่มลงตะกร้า
+                            </button>
+                        </div>
+                    `;
+                }).join("");
+
+                productGrid.innerHTML = productsHTML;
+
+                // เพิ่ม event listeners หลังจากสร้าง HTML เสร็จ
+                document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        // ป้องกันการ bubble ของ event
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        // ดึง ID จาก data attribute
+                        const productId = this.getAttribute('data-product-id');
+                        console.log("กำลังเพิ่มสินค้า ID:", productId);
+
+                        if (productId) {
+                            addToCart(productId, 1);
+                        } else {
+                            console.error("ไม่พบ Product ID ในปุ่ม");
+                            alert("เกิดข้อผิดพลาด: ไม่พบรหัสสินค้า");
+                        }
+                    });
+                });
+            } else {
+                console.error("ไม่พบข้อมูลสินค้า หรือข้อมูลไม่ถูกต้อง");
+                productGrid.innerHTML = '<p>ไม่พบสินค้า</p>';
+            }
+        })
+        .catch((error) => {
+            console.error("เกิดข้อผิดพลาดในการดึงข้อมูลสินค้า:", error);
+            productGrid.innerHTML = `<p>ไม่สามารถโหลดสินค้าได้ กรุณาลองใหม่อีกครั้ง</p>`;
+        });
 });
 
+// Function to add product to cart
 function addToCart(productId, quantity) {
-    fetch('/api/cart', {
-        method: 'POST',
+    // ตรวจสอบความถูกต้องของ input
+    if (!productId) {
+        console.error("ไม่ได้ระบุ Product ID");
+        alert("เกิดข้อผิดพลาด: ไม่พบรหัสสินค้า");
+        return;
+    }
+
+    // แสดง log เพื่อการ debug
+    console.log("กำลังเพิ่มสินค้าลงตะกร้า:", { productId, quantity });
+
+    // ส่งคำขอไปยังเซิร์ฟเวอร์
+    fetch("/api/cart", {
+        method: "POST",
         headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
         },
         body: JSON.stringify({
             product_id: productId,
             quantity: quantity
         }),
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log("สถานะการตอบกลับ:", response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
+        console.log("ผลการเพิ่มสินค้า:", data);
         if (data.success) {
-            alert('Added to cart successfully!');
+            alert("เพิ่มสินค้าลงตะกร้าเรียบร้อยแล้ว");
         } else {
-            alert('Failed to add to cart. Please try again.');
+            alert(data.message || "ไม่สามารถเพิ่มสินค้าลงตะกร้าได้");
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
+        console.error("เกิดข้อผิดพลาด:", error);
+        alert("เกิดข้อผิดพลาดในการเพิ่มสินค้า กรุณาลองใหม่อีกครั้ง");
     });
 }
 
+
+
+// Function to save item
 function saveItem(productId) {
-    fetch('/api/saved', {
-        method: 'POST',
+    console.log("saveItem called with productId:", productId);
+    fetch("/api/saved", {
+        method: "POST",
         headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            product_id: productId
+            product_id: productId,
         }),
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Item saved successfully!');
-            const saveButton = document.getElementById("save-item");
-            saveButton.classList.add('saved');
-            saveButton.disabled = true;
-            saveButton.textContent = 'Saved';
-        } else {
-            alert('Failed to save item. Please try again.');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred. Please try again.');
-    });
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("Response from saveItem:", data);
+            if (data.success) {
+                alert("Item saved successfully!");
+                const saveButton = document.getElementById("save-item");
+                saveButton.classList.add("saved");
+                saveButton.disabled = true;
+                saveButton.textContent = "Saved";
+            } else {
+                alert("Failed to save item. Please try again.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error in saveItem:", error);
+            alert("An error occurred. Please try again.");
+        });
 }
 
+
+
+// Function to show Buy Now popup
 function showBuyNowPopup(product, quantity) {
-    const popup = document.createElement('div');
-    popup.className = 'buy-now-popup';
+    console.log("showBuyNowPopup called with:", { product, quantity });
+    const popup = document.createElement("div");
+    popup.className = "buy-now-popup";
     popup.innerHTML = `
         <h2>Complete Your Purchase</h2>
         <form id="buy-now-form">
@@ -144,39 +249,49 @@ function showBuyNowPopup(product, quantity) {
     `;
     document.body.appendChild(popup);
 
-    document.getElementById('buy-now-form').addEventListener('submit', (e) => {
+    document.getElementById("buy-now-form").addEventListener("submit", (e) => {
         e.preventDefault();
+        console.log("Buy Now form submitted.");
         const formData = new FormData(e.target);
         const purchaseData = {
-            product_id: formData.get('product_id'),
+            product_id: formData.get("product_id"),
             quantity: quantity,
-            name: formData.get('name'),
-            email: formData.get('email'),
-            address: formData.get('address'),
-            card: formData.get('card')
+            name: formData.get("name"),
+            email: formData.get("email"),
+            address: formData.get("address"),
+            card: formData.get("card"),
         };
+        console.log("Purchase data:", purchaseData);
 
-        fetch('/api/purchase', {
-            method: 'POST',
+        fetch("/api/purchase", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             },
             body: JSON.stringify(purchaseData),
         })
-        .then(response => response.json())
-        .then(data => {
+        .then((response) => {
+            console.log("Response status:", response.status);
+            return response.json();
+        })
+        .then((data) => {
+            console.log("Response data:", data);
             if (data.success) {
-                alert('Purchase successful!');
+                alert("Purchase successful!");
                 popup.remove();
-                // Redirect to the purchase page with the new purchase ID
-                window.location.href = `/purchase?new_purchase_id=${data.purchase.id}`;
+                if (data.purchase && data.purchase.id) {
+                    window.location.href = `/purchase?new_purchase_id=${data.purchase.id}`;
+                } else {
+                    console.error("Purchase ID not found in response");
+                    window.location.href = '/purchase';
+                }
             } else {
-                alert('Purchase failed. Please try again.');
+                alert("Failed to complete purchase. " + (data.message || "Please try again."));
             }
         })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
+        .catch((error) => {
+            console.error("Error in purchase:", error);
+            alert("An error occurred. Please try again.");
         });
     });
 }

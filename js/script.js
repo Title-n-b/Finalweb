@@ -1,143 +1,143 @@
 // Main JavaScript functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Toggle mobile menu
-    const menuToggle = document.querySelector('.menu-toggle');
-    const sideNav = document.querySelector('.side-nav');
+// document.addEventListener('DOMContentLoaded', function() {
+//     // Toggle mobile menu
+//     const menuToggle = document.querySelector('.menu-toggle');
+//     const sideNav = document.querySelector('.side-nav');
 
-    if (menuToggle && sideNav) {
-        menuToggle.addEventListener('click', () => {
-            sideNav.classList.toggle('active');
-        });
-    }
+//     if (menuToggle && sideNav) {
+//         menuToggle.addEventListener('click', () => {
+//             sideNav.classList.toggle('active');
+//         });
+//     }
 
-    // Search functionality
-    const searchInput = document.querySelector('.search-bar input');
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            // Implement search functionality
-            console.log('Searching for:', e.target.value);
-        });
-    }
+//     // Search functionality
+//     const searchInput = document.querySelector('.search-bar input');
+//     if (searchInput) {
+//         searchInput.addEventListener('input', (e) => {
+//             // Implement search functionality
+//             console.log('Searching for:', e.target.value);
+//         });
+//     }
 
-    // Initialize cart
-    initializeCart();
-});
+//     // Initialize cart
+//     initializeCart();
+// });
 
-//
-document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.getElementById("search-input");
-    const productGrid = document.getElementById("explore-products");
+// //
+// document.addEventListener("DOMContentLoaded", () => {
+//     const searchInput = document.getElementById("search-input");
+//     const productGrid = document.getElementById("explore-products");
 
-    let products = []; // เก็บข้อมูลสินค้า
+//     let products = []; // เก็บข้อมูลสินค้า
 
-    // ดึงข้อมูลสินค้าเมื่อหน้าโหลด
-    fetch("/api/products")
-        .then((response) => response.json())
-        .then((data) => {
-            products = data; // เก็บสินค้าในตัวแปร
-            displayProducts(products); // แสดงสินค้าทั้งหมด
-        })
-        .catch((error) => {
-            console.error("Error fetching products:", error);
-        });
+//     // ดึงข้อมูลสินค้าเมื่อหน้าโหลด
+//     fetch("/api/products")
+//         .then((response) => response.json())
+//         .then((data) => {
+//             products = data; // เก็บสินค้าในตัวแปร
+//             displayProducts(products); // แสดงสินค้าทั้งหมด
+//         })
+//         .catch((error) => {
+//             console.error("Error fetching products:", error);
+//         });
 
-    // ฟังก์ชันสำหรับแสดงสินค้า
-    function displayProducts(productsToDisplay) {
-        productGrid.innerHTML = productsToDisplay
-            .map(
-                (product) => `
-            <div class="deal-card">
-                <img src="${product.image_url || 'default-image.jpg'}" alt="${product.model || 'No model'}">
-                <h3>${product.model || 'Unnamed Product'}</h3>
-                <div class="price">Price $${product.price ? product.price.toFixed(2) : 'N/A'}</div>
-                <div class="rating">
-                    <i class="fas fa-star"></i>
-                    <span>4.9</span>
-                </div>
-                <button class="btn btn-success add-to-cart">
-                    <i class="fas fa-plus"></i>
-                </button>
-            </div>
-          `
-            )
-            .join("");
-    }
+//     // ฟังก์ชันสำหรับแสดงสินค้า
+//     function displayProducts(productsToDisplay) {
+//         productGrid.innerHTML = productsToDisplay
+//             .map(
+//                 (product) => `
+//             <div class="deal-card">
+//                 <img src="${product.image_url || 'default-image.jpg'}" alt="${product.model || 'No model'}">
+//                 <h3>${product.model || 'Unnamed Product'}</h3>
+//                 <div class="price">Price $${product.price ? product.price.toFixed(2) : 'N/A'}</div>
+//                 <div class="rating">
+//                     <i class="fas fa-star"></i>
+//                     <span>4.9</span>
+//                 </div>
+//                 <button class="btn btn-success add-to-cart">
+//                     <i class="fas fa-plus"></i>
+//                 </button>
+//             </div>
+//           `
+//             )
+//             .join("");
+//     }
 
-    // ฟังก์ชันค้นหาสินค้า
-    searchInput.addEventListener("input", (e) => {
-        const searchTerm = e.target.value.toLowerCase();
+//     // ฟังก์ชันค้นหาสินค้า
+//     searchInput.addEventListener("input", (e) => {
+//         const searchTerm = e.target.value.toLowerCase();
 
-        // กรองสินค้าที่ตรงกับคำค้นหา
-        const filteredProducts = products.filter((product) =>
-            product.model.toLowerCase().includes(searchTerm)
-        );
+//         // กรองสินค้าที่ตรงกับคำค้นหา
+//         const filteredProducts = products.filter((product) =>
+//             product.model.toLowerCase().includes(searchTerm)
+//         );
 
-        // แสดงสินค้าที่กรองแล้ว
-        displayProducts(filteredProducts);
-    });
-});
+//         // แสดงสินค้าที่กรองแล้ว
+//         displayProducts(filteredProducts);
+//     });
+// });
 
 
-//
+// //
 
-// Cart functionality
-function initializeCart() {
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+// // Cart functionality
+// function initializeCart() {
+//     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    // Add to cart function
-    window.addToCart = function(product) {
-        cart.push(product);
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCartCount();
-    };
+//     // Add to cart function
+//     window.addToCart = function(product) {
+//         cart.push(product);
+//         localStorage.setItem('cart', JSON.stringify(cart));
+//         updateCartCount();
+//     };
 
-    // Update cart count
-    function updateCartCount() {
-        const cartCount = document.querySelector('.cart-count');
-        if (cartCount) {
-            cartCount.textContent = cart.length;
-        }
-    }
+//     // Update cart count
+//     function updateCartCount() {
+//         const cartCount = document.querySelector('.cart-count');
+//         if (cartCount) {
+//             cartCount.textContent = cart.length;
+//         }
+//     }
 
-    // Initial cart count update
-    updateCartCount();
-}
+//     // Initial cart count update
+//     updateCartCount();
+// }
 
-// Product data
-const products = [
-    {
-        id: 1,
-        name: "Beats kaeHoney",
-        price: 450.55,
-        description: "Ergonomic or cups with on-oor controls up to 22 hours of tening time. Apple W1 crip & Closs",
-        image: "images/product1.jpg",
-        rating: 5,
-        reviews: 200
-    },
-    // Add more products here
-];
+// // Product data
+// const products = [
+//     {
+//         id: 1,
+//         name: "Beats kaeHoney",
+//         price: 450.55,
+//         description: "Ergonomic or cups with on-oor controls up to 22 hours of tening time. Apple W1 crip & Closs",
+//         image: "images/product1.jpg",
+//         rating: 5,
+//         reviews: 200
+//     },
+//     // Add more products here
+// ];
 
-// Function to create product card
-function createProductCard(product) {
-    return `
-        <div class="product-card">
-            <img src="${product.image}" alt="${product.name}">
-            <div class="product-info">
-                <h3>${product.name}</h3>
-                <div class="rating">
-                    ${'★'.repeat(product.rating)}${'☆'.repeat(5-product.rating)}
-                    <span>(${product.reviews}+ Reviews)</span>
-                </div>
-                <p>${product.description}</p>
-                <div class="price">Price $ ${product.price}</div>
-                <div class="product-actions">
-                    <button onclick="addToCart(${product.id})" class="add-to-cart">Add to card</button>
-                    <button class="buy-now">Buy Now</button>
-                </div>
-            </div>
-        </div>
-    `;
-}
+// // Function to create product card
+// function createProductCard(product) {
+//     return `
+//         <div class="product-card">
+//             <img src="${product.image}" alt="${product.name}">
+//             <div class="product-info">
+//                 <h3>${product.name}</h3>
+//                 <div class="rating">
+//                     ${'★'.repeat(product.rating)}${'☆'.repeat(5-product.rating)}
+//                     <span>(${product.reviews}+ Reviews)</span>
+//                 </div>
+//                 <p>${product.description}</p>
+//                 <div class="price">Price $ ${product.price}</div>
+//                 <div class="product-actions">
+//                     <button onclick="addToCart(${product.id})" class="add-to-cart">Add to card</button>
+//                     <button class="buy-now">Buy Now</button>
+//                 </div>
+//             </div>
+//         </div>
+//     `;
+// }
 document.addEventListener('DOMContentLoaded', function() {
     const sidebarLinks = document.querySelectorAll('.side-nav a');
     
@@ -234,5 +234,3 @@ document.addEventListener('DOMContentLoaded', async function() {
         console.error('Error checking auth status:', error);
     }
 });
-
-

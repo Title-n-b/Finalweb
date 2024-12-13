@@ -213,7 +213,7 @@ app.post('/api/logout', (req, res) => {
 // API routes
 app.get('/api/products', (req, res) => {
     const sql = `
-        SELECT products.model, products.price, products.image_url, 
+        SELECT products.id, products.model, products.price, products.image_url, 
                brands.name AS brand_name, categories.name AS category_name 
         FROM products
         JOIN brands ON products.brand_id = brands.id
@@ -344,23 +344,33 @@ app.post('/api/register', async (req, res) => {
 
 // Add to cart
 app.post('/api/cart', requireLogin, (req, res) => {
+    console.log('ข้อมูลที่ได้รับจาก request:', req.body);
     const { product_id, quantity } = req.body;
+    console.log('ได้รับคำขอเพิ่มสินค้าลงตะกร้า:', { product_id, quantity });
+
+    if (!product_id || product_id === 'undefined') {
+        console.error('ไม่พบ Product ID ในคำขอ');
+        return res.status(400).json({ success: false, message: 'กรุณาระบุ Product ID' });
+    }
+
     const account_id = req.session.userId;
 
-    // First, get the product details
+    // ดึงข้อมูลสินค้า
     const productQuery = 'SELECT * FROM products WHERE id = ?';
     connection.query(productQuery, [product_id], (err, productResults) => {
         if (err) {
-            return res.status(500).json({ success: false, message: 'Database error' });
+            console.error('เกิดข้อผิดพลาดกับฐานข้อมูล:', err);
+            return res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดกับฐานข้อมูล' });
         }
         if (productResults.length === 0) {
-            return res.status(404).json({ success: false, message: 'Product not found' });
+            console.error('ไม่พบสินค้า ID:', product_id);
+            return res.status(404).json({ success: false, message: 'ไม่พบสินค้า' });
         }
 
         const product = productResults[0];
         const total = product.price * quantity;
 
-        // Now insert into the cart table
+        // เพิ่มลงตะกร้า
         const insertQuery = `
             INSERT INTO cart (account_id, username, brand_id, products_id, model, price, image_url, quantity, total)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -377,13 +387,16 @@ app.post('/api/cart', requireLogin, (req, res) => {
             total
         ], (insertErr) => {
             if (insertErr) {
-                console.error('Insert error:', insertErr);
-                return res.status(500).json({ success: false, message: 'Failed to add to cart' });
+                console.error('เกิดข้อผิดพลาดในการเพิ่มลงตะกร้า:', insertErr);
+                return res.status(500).json({ success: false, message: 'ไม่สามารถเพิ่มลงตะกร้าได้' });
             }
-            res.json({ success: true, message: 'Added to cart successfully' });
+            console.log('เพิ่มสินค้าลงตะกร้าสำเร็จ:', { product_id, quantity });
+            res.json({ success: true, message: 'เพิ่มลงตะกร้าสำเร็จ' });
         });
     });
 });
+
+
 
 // Save item
 app.post('/api/saved', requireLogin, (req, res) => {
