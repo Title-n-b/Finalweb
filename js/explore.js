@@ -87,6 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     
 });
+
 document.addEventListener("DOMContentLoaded", () => {
     const productGrid = document.getElementById("explore-products");
 
@@ -108,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="deal-card">
                             <img src="${product.image_url || 'default-image.jpg'}" alt="${product.model || 'ไม่มีชื่อรุ่น'}">
                             <h3>${product.model || 'สินค้าไม่มีชื่อ'}</h3>
-                            <div class="price">ราคา $${product.price ? product.price.toFixed(2) : 'ไม่ระบุ'}</div>
+                            <div class="price">ราคา B${product.price ? product.price.toFixed(2) : 'ไม่ระบุ'}</div>
                             <div class="rating">
                                 <i class="fas fa-star"></i>
                                 <span>4.9</span>

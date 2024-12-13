@@ -619,7 +619,39 @@ app.post('/api/purchase', requireLogin, (req, res) => {
         });
     });
 });
+///
+app.get('/resetpass', (req, res) => {
+    res.render('resetpassword.ejs');
+});
 
+app.post('/resetpass', (req, res) => {
+    const { newPassword, confirmPassword } = req.body;
+    const username = req.session.userID;
+
+    if (newPassword !== confirmPassword) {
+        return res.status(400).send('Passwords do not match');
+    }
+
+    bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(newPassword, salt, (err, hash) => {
+            if (err) {
+                console.error('Error hashing password:', err);
+                return res.status(500).send('Internal server error');
+            }
+
+            db.query('UPDATE accounts SET password = ? WHERE username = ?', [hash, username], (err) => {
+                if (err) {
+                    console.error('Error updating password:', err);
+                    return res.status(500).send('Database error');
+                }
+                console.log('Password reset successful');
+                res.redirect('/index');
+            });
+        });
+    });
+});
+
+///
 
 
 // Create HTTP server

@@ -11,9 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             <img src="${purchase.image_url}" alt="${purchase.model}" class="purchase-item-image">
                             <div class="purchase-item-details">
                                 <h3>${purchase.model}</h3>
-                                <p>Price: $${purchase.price.toFixed(2)}</p>
+                                <p>Price: ฿${purchase.price.toFixed(2)}</p>
                                 <p>Quantity: ${purchase.quantity}</p>
-                                <p>Total: $${purchase.total.toFixed(2)}</p>
+                                <p>Total: ฿${purchase.total.toFixed(2)}</p>
                                 <p>Date: ${new Date(purchase.purchase_date).toLocaleString()}</p>
                             </div>
                         </div>
@@ -47,9 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <img src="${data.purchase.image_url}" alt="${data.purchase.model}" class="purchase-item-image">
                                 <div class="purchase-item-details">
                                     <h3>${data.purchase.model}</h3>
-                                    <p>Price: $${data.purchase.price.toFixed(2)}</p>
+                                    <p>Price: ฿${data.purchase.price.toFixed(2)}</p>
                                     <p>Quantity: ${data.purchase.quantity}</p>
-                                    <p>Total: $${data.purchase.total.toFixed(2)}</p>
+                                    <p>Total: ฿${data.purchase.total.toFixed(2)}</p>
                                     <p>Date: ${new Date(data.purchase.purchase_date).toLocaleString()}</p>
                                 </div>
                             </div>

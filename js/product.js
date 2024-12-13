@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                       <span>(${product.reviews || 0}+ Reviews)</span>
                                   </div>
                                   <p class="card-text">${product.description || 'No description available.'}</p>
-                                  <div class="price">Price $${product.price ? parseFloat(product.price).toFixed(2) : 'N/A'}</div>
+                                  <div class="price">Price ฿${product.price ? parseFloat(product.price).toFixed(2) : 'N/A'}</div>
                                   <div class="actions">
                                       <button class="btn btn-success" id="add-to-cart">Add to cart</button>
                                       <button class="btn btn-outline-success heart-btn" id="save-item">

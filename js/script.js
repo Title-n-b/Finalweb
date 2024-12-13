@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
             link.style.backgroundColor = '';
             link.style.color = '';
         });
-    }
+    }   
 
     // Add click event listeners to all sidebar links
     sidebarLinks.forEach(link => {

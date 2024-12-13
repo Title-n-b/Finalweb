@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <img src="${item.image_url}" alt="${item.model}" class="saved-item-image">
                             <div class="saved-item-details">
                                 <h3>${item.model}</h3>
-                                <p>Price: $${item.price.toFixed(2)}</p>
+                                <p>Price: ฿${item.price.toFixed(2)}</p>
                                 <button class="add-to-cart-btn" data-product-id="${item.products_id}">Add to Cart</button>
                                 <button class="remove-saved-btn">Remove</button>
                             </div>
