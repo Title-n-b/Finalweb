@@ -18,14 +18,14 @@ document.addEventListener("DOMContentLoaded", () => {
           console.log("Product fetched:", product);
           if (product && typeof product === 'object' && Object.keys(product).length > 0) {
               specificProductContainer.innerHTML = `
-                  <div class="card product-card mb-4">
+                  <div class="card product-card">
                       <div class="row g-0">
-                          <div class="col-md-4">
+                          <div class="col-md-5">
                               <img src="${product.image_url || 'images/default-product.jpg'}" 
                                    class="img-fluid rounded-start" 
                                    alt="${product.model || 'Product Image'}">
                           </div>
-                          <div class="col-md-8">
+                          <div class="col-md-7">
                               <div class="card-body">
                                   <h5 class="card-title">${product.model || 'Unknown Product'}</h5>
                                   <div class="rating">

@@ -130,17 +130,18 @@
 .deal-card {
     background: white;
     border-radius: 10px;
-    padding: 15px;
+    padding: 10px 0;
     min-width: 200px;
     text-align: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .deal-card img {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
+    width: 180px;
+    height: 130px;
+    object-fit: cover;
     margin-bottom: 10px;
+    padding: 0;
 }
 
 .deal-card h3 {
