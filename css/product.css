@@ -1,103 +1,153 @@
-/* Reset styles */
-body, h1, p, a, button {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+.product-container {
+  padding: 2rem;
+}
+
+.product-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+.card-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.rating {
+  color: #ffd700;
+  margin-bottom: 1rem;
+}
+
+.rating span {
+  color: #666;
+  margin-left: 0.5rem;
+}
+
+.price {
+  font-size: 1.5rem;
+  color: #4CAF50;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.quantity {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quantity input {
+  width: 60px;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.5rem;
+}
+
+.heart-btn {
+  padding: 0.5rem 1rem;
+}
+
+.heart-btn i {
+  color: #4CAF50;
+}
+
+.promo-sidebar {
+  background: #4CAF50;
+  border-radius: 12px;
+  padding: 2rem;
+  color: white;
+  text-align: center;
+}
+
+.promo-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.promo-content img {
+  width: 100%;
+  max-width: 200px;
+  margin: 1rem 0;
+  border-radius: 8px;
+}
+
+.promo-content .btn {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.img-fluid {
+  max-height: 400px;
+  object-fit: contain;
+}
+
+@media (max-width: 768px) {
+  .actions {
+      flex-direction: column;
+      align-items: stretch;
   }
   
-  /* Body */
-  body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(to bottom, #f7f7f7, #e7e7e7);
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .quantity {
+      justify-content: center;
   }
-  
-  /* Header */
-  .header {
-    width: 100%;
-    padding: 15px;
-    background-color: #4CAF50;
-    color: white;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .header .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: white;
-    text-decoration: none;
-  }
-  
-  .header .logo:hover {
-    text-decoration: underline;
-  }
-  
-  /* Main content */
-  .main-content {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-  
-  /* Product container */
-  .product-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-  }
-  
-  .product-container img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .product-container h1 {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #4CAF50;
-  }
-  
-  .product-container p {
-    font-size: 1rem;
-    color: #666;
-  }
-  
-  .product-container .price {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  /* Buy Now Button */
-  .btn-buy {
-    margin-top: 20px;
-    padding: 15px 30px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .btn-buy:hover {
-    background-color: #45A049;
-  }
-  
-  .btn-buy:active {
-    transform: scale(0.98);
-  }
-  
+}
+
+.buy-now-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.cart-summary {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.buy-now-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.buy-now-popup form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.buy-now-popup input {
+  padding: 8px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+.buy-now-popup button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+

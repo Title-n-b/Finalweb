@@ -124,6 +124,9 @@ app.get('/purchase', requireLogin, (req, res) => {
 app.get('/map', requireLogin, (req, res) => {
     res.sendFile(path.join(__dirname, 'map.html'));
 });
+app.get('/product', requireLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'product.html'));
+});
 
 //
 // API Register
@@ -271,7 +274,22 @@ app.get('/api/product/2', (req, res) => {
     });
 });
 //
-
+// Get product by ID
+app.get('/api/product/:id', (req, res) => {
+    const productId = req.params.id;
+    const sql = `SELECT * FROM products WHERE id = ?`;
+    connection.query(sql, [productId], (err, result) => {
+        if (err) {
+            console.error("Database query error:", err);
+            return res.status(500).json({ message: "Error fetching product" });
+        }
+        if (result.length > 0) {
+            res.json(result[0]);
+        } else {
+            res.status(404).json({ message: "Product not found" });
+        }
+    });
+});
 
 // Page routes
 app.get('/login', (req, res) => {
@@ -580,14 +598,23 @@ app.post('/api/purchase', requireLogin, (req, res) => {
             }
             console.log('Purchase successful:', { account_id, username: req.session.username, product_id, quantity, total });
             
-            // Fetch the newly inserted purchase
-            const purchaseQuery = `SELECT * FROM purchase WHERE id = ?`;
-            connection.query(purchaseQuery, [result.insertId], (purchaseErr, purchaseResults) => {
-                if (purchaseErr) {
-                    console.error('Error fetching purchase:', purchaseErr);
-                    return res.status(500).json({ success: true, message: 'Purchase successful, but failed to fetch details' });
+            // Remove the purchased item from the cart
+            const removeFromCartQuery = 'DELETE FROM cart WHERE account_id = ? AND products_id = ?';
+            connection.query(removeFromCartQuery, [account_id, product_id], (removeErr, removeResult) => {
+                if (removeErr) {
+                    console.error('Error removing item from cart:', removeErr);
+                    // We don't want to fail the purchase if cart removal fails, so we just log the error
                 }
-                res.json({ success: true, message: 'Purchase successful', purchase: purchaseResults[0] });
+                
+                // Fetch the newly inserted purchase
+                const purchaseQuery = `SELECT * FROM purchase WHERE id = ?`;
+                connection.query(purchaseQuery, [result.insertId], (purchaseErr, purchaseResults) => {
+                    if (purchaseErr) {
+                        console.error('Error fetching purchase:', purchaseErr);
+                        return res.status(500).json({ success: true, message: 'Purchase successful, but failed to fetch details' });
+                    }
+                    res.json({ success: true, message: 'Purchase successful', purchase: purchaseResults[0] });
+                });
             });
         });
     });

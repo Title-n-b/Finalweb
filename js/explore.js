@@ -312,6 +312,7 @@ function showBuyNowPopup(product, quantity) {
             <input type="text" name="address" placeholder="Shipping Address" required>
             <input type="text" name="card" placeholder="Credit Card Number" required>
             <button type="submit" class="btn btn-primary">Confirm Purchase</button>
+            <button type="button" class="btn btn-outline-secondary" onclick="this.closest('.buy-now-popup').remove()">Cancel</button>
         </form>
     `;
     document.body.appendChild(popup);
